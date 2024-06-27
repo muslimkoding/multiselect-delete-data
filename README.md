@@ -64,3 +64,69 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# Multiselect Delete Data
+## Langkah 1 Buat model dan migration
+```
+php artisan make:model Article -m
+```
+
+Jalankan migrasi untuk membuat tabel:
+```
+php artisan migrate
+```
+
+## Langkah 2 Seeder untuk data dummy
+Buat seeder untuk mengisi beberapa data artikel:
+```
+php artisan make:seeder ArticlesTableSeeder
+```
+Edit seeder di `database/seeders/ArticlesTableSeeder.php`:
+```
+use App\Models\Article;
+use Illuminate\Database\Seeder;
+
+class ArticlesTableSeeder extends Seeder
+{
+    public function run()
+    {
+        Article::factory()->count(50)->create();
+    }
+}
+```
+
+Setelah Data Seeder sudah siap, Berikut adalah langkah-langkah untuk membuat factory dan mengisinya dengan data:
+```
+php artisan make:factory ArticleFactory --model=Article
+```
+
+Edit file `database/factories/ArticleFactory.php` yang baru saja dibuat:
+```
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Article;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class ArticleFactory extends Factory
+{
+    protected $model = Article::class;
+
+    public function definition()
+    {
+        return [
+            'title' => $this->faker->sentence,
+            'body' => $this->faker->paragraph,
+        ];
+    }
+}
+```
+
+Setelah `ArticelTableSeeder` dan `ArticleFactory` sudah siap Jalankan seeder:
+```
+php artisan db:seed --class=ArticlesTableSeeder
+```
+
+
+
