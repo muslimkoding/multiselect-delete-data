@@ -134,7 +134,7 @@ Buat controller untuk menangani permintaan show artikel dan delete selected arti
 php artisan make:controller ArticleController
 ```
 
-Edit controller `app/Http/Controllers/ArticleController.php`:
+Edit controller `app/Http/Controllers/ArticleController.php` (untuk menghapus data tanpa gambar):
 ```
 <?php
 
@@ -163,6 +163,31 @@ class ArticleController extends Controller
     return view('article.index', compact('items'));
 }
 }
+```
+
+Apabila data memiliki file gambar, gunakan method ini : 
+```
+public function deleteSelected(Request $request)
+    {
+        try {
+            $ids = $request->input('ids');
+            $data = Article::whereIn('id', $ids)->get();
+
+            foreach ($data as $item) {
+                $image = Storage::delete('public/back/article/'.$item->thumbnail);
+
+                if ($image) {
+                    $item->delete();
+                } else {
+                    $item->delete();
+                }
+            }
+
+            return response()->json(['message' => 'Deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 ```
 
 Tambahkan route di `routes/web.php`:
